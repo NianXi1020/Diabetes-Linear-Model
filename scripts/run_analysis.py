@@ -6,11 +6,32 @@ import random
 import sys
 from pathlib import Path
 
-# Ensure the ``src`` directory is on the Python path when running as a script.
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SRC_DIR = PROJECT_ROOT / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+
+def _bootstrap_sys_path() -> None:
+    """Add the repository's ``src`` directory to ``sys.path`` if present.
+
+    The script may be placed either inside ``scripts/`` (as in this repository)
+    or copied to the project root. Rather than assuming a fixed relative
+    location, walk up the directory tree until a folder containing ``src`` is
+    found and prepend it to ``sys.path``.
+    """
+
+    current = Path(__file__).resolve().parent
+    for parent in (current, *current.parents):
+        candidate = parent / "src"
+        if candidate.exists():
+            path_str = str(candidate)
+            if path_str not in sys.path:
+                sys.path.insert(0, path_str)
+            break
+    else:  # pragma: no cover - defensive fallback, should not happen in repo
+        raise RuntimeError(
+            "Unable to locate the 'src' directory. Ensure the script resides "
+            "within the Diabetes-Linear-Model project structure."
+        )
+
+
+_bootstrap_sys_path()
 
 from diabetes_linear_model.data import load_az_diabetes, prepare_regression_matrices
 from diabetes_linear_model.gprior import fit_g_prior_model
