@@ -15,7 +15,7 @@ The original data file is referred to as `azdiabetes.dat` in Hoff (2009). Place 
 The project relies only on the Python standard library, so no additional packages are required. Run the analysis script directly with Python:
 
 ```bash
-python scripts/run_analysis.py --data-path data/azdiabetes.dat.txt
+python scripts/run_analysis.py --data-path azdiabetes.dat.txt
 ```
 
 Adjust sampling settings via the optional command line arguments to trade off between accuracy and runtime.
